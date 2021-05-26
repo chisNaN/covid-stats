@@ -1,0 +1,69 @@
+body {
+  font-family: 'Roboto', sans-serif;
+  font-size: 1rem;
+  color: #444;
+  text-align: center;
+  font-size: 1rem;
+  line-height: 1.4em;
+}
+
+a {
+  text-decoration: none;
+  color: dodgerblue;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.container {
+  width: 90%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.flex {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+table {
+  margin-right: 2%;
+}
+
+th, th a {
+  color: white;
+}
+
+th, td {
+  padding: 5px 10px;
+}
+
+tr:nth-child(odd) {
+  background-color: #64B5F6;
+}
+
+tr:nth-child(even) {
+  background-color: #BBDEFB;
+}
+
+th a::after {
+  font-family: "Font Awesome 5 Free"; 
+  font-weight: 900;
+  content: " \f077 \f078";
+  padding-right: 3px;
+}
+
+.danger {
+  color: red;
+}
+
+.good {
+  color: #35B33F;
+}
+
+@media screen and (min-width: 1024px) {
+  .flex {
+    flex-direction: row;
+  }
+}
