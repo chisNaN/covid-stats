@@ -1,16 +1,14 @@
 import data from './datapop2021.js'
 let clickConfirmed = false
-async function displayData({
-  type
-}, sort = 'confirmed') {
+async function displayData({ type, target }) {
   try {
+    const sort = target?.id ?? 'confirmed'
     document.querySelector('table').innerHTML = ''
     const covid = await (await fetch('https://pomber.github.io/covid19/timeseries.json')).json()
-    console.log(covid);
     const flags = await (await fetch('https://unpkg.com/country-flag-emoji-json@1.0.2/json/flag-emojis.json')).json()
     const stats = []
-    let html = `<tr><th></th><th>Country</th><th><a href="#" onclick="displayData(event, 'confirmed')">Confirmed</a></th><th><a href="#" onclick="displayData(event, 'deaths')">Deaths</a></th><th><a href="#" onclick="displayData(event, 'lethality')">Lethality</a></th><th><a href="#"
-    onclick="displayData(event, 'recovered')">Recovered</a></th><th><a href="#" onclick="displayData(event, 'confirmedByPop')">% Confirmed by pop</a></th></tr>`
+    let html = `<tr><th></th><th>Country</th><th><a href="#" id="confirmed" >Confirmed</a></th><th><a href="#" id="deaths">Deaths</a></th><th><a href="#" id="lethality">Lethality</a></th><th><a href="#"
+    id="recovered">Recovered</a></th><th><a href="#" id="confirmedByPop">% Confirmed by pop</a></th></tr>`
     let totalConfirmed = 0
     let totalDeaths = 0
     let totalRecovered = 0
@@ -28,7 +26,6 @@ async function displayData({
       const countryFromPop = data.find(v2 => country === v2.name || country === v2.cca2)
       if (countryFromPop) {
         const countryPop = countryFromPop.pop2020.replace(/\./g, '')
-        // const countryPop = countryFromPop.pop2019.replace(/\./g, '')
         totalPop += +countryPop
         confirmedByPop = ((confirmed / countryPop) * 100).toFixed(2)
       }else{
@@ -78,8 +75,20 @@ async function displayData({
     <u>new => </u><font color="brown">% death by world pop ${(totalDeaths / totalPop * 100).toFixed(3)} %</font><br>
     <span class="good">% recovered ${((totalRecovered / totalConfirmed) * 100).toFixed(2)} %</span><br>
     <a href="https://fr.wikipedia.org/wiki/Pand%C3%A9mie_de_Covid-19_par_pays#D%C3%A9tail_des_cas_par_pays" target="_blank">Wikipedia article</a></div>`
+    setFilterListeners()
   } catch (e) {
     document.write(e.toString())
   }
+} // en displayData
+
+document.addEventListener('DOMContentLoaded', async e => {
+  await displayData(e)
+  setFilterListeners()
+})
+const setFilterListeners = () => {
+  document.querySelector('#confirmed').addEventListener('click', displayData)
+  document.querySelector('#deaths').addEventListener('click', displayData)
+  document.querySelector('#lethality').addEventListener('click', displayData)
+  document.querySelector('#recovered').addEventListener('click', displayData)
+  document.querySelector('#confirmedByPop').addEventListener('click', displayData)
 }
-document.addEventListener('DOMContentLoaded', displayData) // end
