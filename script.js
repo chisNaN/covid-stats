@@ -86,9 +86,11 @@ document.addEventListener('DOMContentLoaded', async e => {
   setFilterListeners()
 })
 const setFilterListeners = () => {
-  document.querySelector('#confirmed').addEventListener('click', displayData)
+  [...document.querySelectorAll('a')].filter(v => v.id).foreEach(v => v.addEventListener('click', displayData))
+  /*document.querySelector('#confirmed').addEventListener('click', displayData)
   document.querySelector('#deaths').addEventListener('click', displayData)
   document.querySelector('#lethality').addEventListener('click', displayData)
   document.querySelector('#recovered').addEventListener('click', displayData)
   document.querySelector('#confirmedByPop').addEventListener('click', displayData)
+  */
 }
