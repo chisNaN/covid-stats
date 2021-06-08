@@ -1,4 +1,4 @@
-import data from './datapop2021.js'
+import vaccine from './covid.js'
 let clickConfirmed = false
 async function displayData({ type, target }) {
   try {
@@ -7,7 +7,7 @@ async function displayData({ type, target }) {
     const covid = await (await fetch('https://pomber.github.io/covid19/timeseries.json')).json()
     const flags = await (await fetch('https://unpkg.com/country-flag-emoji-json@1.0.2/json/flag-emojis.json')).json()
     const vaccine = await (await fetch('https://covid.ourworldindata.org/data/owid-covid-data.json')).json()
-    console.log(vaccine);
+    //console.log(vaccine);
     const stats = []
     let html = `<tr><th></th><th>Country</th><th><a href="#" id="confirmed" >Confirmed</a></th><th><a href="#" id="deaths">Deaths</a></th><th><a href="#" id="lethality">Lethality</a></th><th><a href="#"
     id="recovered">Recovered</a></th><th><a href="#" id="confirmedByPop">% Confirmed by pop</a></th></tr>`
@@ -16,32 +16,72 @@ async function displayData({ type, target }) {
     let totalRecovered = 0
     let totalPop = 0
     for (const [k, v] of Object.entries(flags)) {
-      flags[v.code] = v.emoji
+      //console.log(v);
+      if (v.name.includes('Hong Kong')) {
+        flags['Hong Kong'] = v.emoji
+      } else if (v.name.includes('Macau')) {
+        flags['Macao'] = v.emoji
+      } else {
+        flags[v.name.replaceAll('&', 'and')] = v.emoji
+      }
       delete flags[k]
     }
+    let flagNotFound = 0
     for (const [indicativeCountry, infoDatas] of Object.entries(vaccine)) {
       //console.warn('location from vaccine api ', infoDatas)
       //vaccine[infoDatas.location] = infoDatas
       //delete vaccine[indicativeCountry]
+
+      const country = infoDatas.location
+      if (country === 'Macao') {
+      console.log('macao', infoDatas);
+      }
+      //const reg = new RegExp(country, 'i')
+      // const resultReg =
+      const flag = flags[country] ?? flagNotFound++
       const { data } = infoDatas
       const lastVaccined = data.filter(v => v.people_vaccinated)
+      let peopleVaccinated = 0
+      let newVaccinations = 0
       if(lastVaccined.length > 0) {
-        console.log('lastVaccined ',lastVaccined[lastVaccined.length - 1]);
+        //console.log('lastVaccined ',lastVaccined[lastVaccined.length - 1]);
+        peopleVaccinated = lastVaccined[lastVaccined.length - 1].people_vaccinated
+        newVaccinations = lastVaccined[lastVaccined.length - 1].new_vaccinations
       } else {
-        console.warn('no vaccine datas for ', infoDatas.location);
+        console.warn('no vaccine datas for ', country);
       }
-      const confirmed = data[data.length - 1].total_cases
-      const deaths = data[data.length - 1].total_deaths
-      const lethality = ((deaths / confirmed) * 100).toFixed(2)
+      const lastData = data[data.length - 1]
+      const confirmed = lastData.total_cases ?? 0
+      const newConfirmed = lastData.new_cases ?? 0
+      // for Macao for instance no deaths report
+      const newDeaths = lastData.new_deaths ?? 0
+      const deaths = lastData.total_deaths ?? 0
+      const lethality = +((deaths / confirmed) * 100).toFixed(2)
       //const recovered = data[data.length - 1].recovered
       const countryPop = infoDatas.population
       totalPop += +countryPop
       totalConfirmed += confirmed
       totalDeaths += deaths
       //totalRecovered += recovered
-      const confirmedByPop = ((confirmed / countryPop) * 100).toFixed(2)
+      const confirmedByPop = +((confirmed / countryPop) * 100).toFixed(2)
+      stats.push({
+        country,
+        confirmed,
+        deaths,
+        flag,
+        //recovered,
+        newConfirmed,
+        newDeaths,
+        //newRecovered,
+        newVaccinations,
+        peopleVaccinated,
+        lethality,
+        confirmedByPop
+      })
     }
-    //console.log(data);
+    console.log('flagNotFound', flagNotFound);
+    console.log('sortedByCountry ,', stats)
+    /*
     for (const [k, v] of Object.entries(data)) {
       //console.log('flag => ',flags.[v.cca2]);
       //console.log('cca2', v.cca2);
@@ -119,9 +159,8 @@ async function displayData({ type, target }) {
       <span class="good">% recovered ${((totalRecovered / totalConfirmed) * 100).toFixed(2)} %</span><br>
       <a href="https://fr.wikipedia.org/wiki/Pand%C3%A9mie_de_Covid-19_par_pays#D%C3%A9tail_des_cas_par_pays" target="_blank">Wikipedia article</a></div>`
       setFilterListeners()
-      */
-    } // end for of
-    console.warn('stats first loop', stats);
+
+    }*/ // end for of
 
     for (let [country, v] of Object.entries(covid)) {
       if (country === 'Korea, South') {
