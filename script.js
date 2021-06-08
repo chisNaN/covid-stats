@@ -21,22 +21,39 @@ async function displayData({ type, target }) {
     }
     for (const [indicativeCountry, infoDatas] of Object.entries(vaccine)) {
       //console.warn('location from vaccine api ', infoDatas)
-      vaccine[infoDatas.location] = infoDatas
-      delete vaccine[indicativeCountry]
+      //vaccine[infoDatas.location] = infoDatas
+      //delete vaccine[indicativeCountry]
+      const { data } = infoDatas
+      const lastVaccined = data.filter(v => v.people_vaccinated)
+      if(lastVaccined.length > 0) {
+        console.log('lastVaccined ',lastVaccined[lastVaccined.length - 1]);
+      } else {
+        console.warn('no vaccine datas for ', infoDatas.location);
+      }
+      const confirmed = data[data.length - 1].total_cases
+      const deaths = data[data.length - 1].total_deaths
+      const lethality = ((deaths / confirmed) * 100).toFixed(2)
+      //const recovered = data[data.length - 1].recovered
+      const countryPop = infoDatas.population
+      totalPop += +countryPop
+      totalConfirmed += confirmed
+      totalDeaths += deaths
+      //totalRecovered += recovered
+      const confirmedByPop = ((confirmed / countryPop) * 100).toFixed(2)
     }
-    console.log(data);
+    //console.log(data);
     for (const [k, v] of Object.entries(data)) {
       //console.log('flag => ',flags.[v.cca2]);
       //console.log('cca2', v.cca2);
-      if(vaccine[v.name]) {
-        console.warn('confirmed for' ,v.name, vaccine[v.name].data[vaccine[v.name].data.length - 1].total_cases);
+      /*const location = v.name
+      if(vaccine[location]) {
+        //console.warn('confirmed for' ,location, vaccine[location].data[vaccine[location].data.length - 1].total_cases);
         // some places has no confirmed measure like wallis and futuna
 
       } else {
         // some places like puerto rico does not exist in vaccine api
-        console.warn(k, 'st country undef', v.name)
+        console.warn(k, 'st country undef', location)
 
-        return
       }
       /*if (covid[v.name] || covid[v.cca2]) {
         const country = v.name || v.cca2
