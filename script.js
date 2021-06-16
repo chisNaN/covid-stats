@@ -1,12 +1,10 @@
 // import vaccine from './covid.js'
-//console.log('vaccine', vaccine)
 let flags = null
 let vaccine = null
 let clickConfirmed = false
 // we MUST NOT RELOAD fetch crossdomain every sort action!!! (only once in DOMContentLoaded)
 /*async*/ function displayData({ type, target }) {
   try {
-    console.warn('flags', flags)
     const sort = target?.id ?? 'confirmed'
     document.querySelector('table').innerHTML = ''
     // const covid = await (await fetch('https://pomber.github.io/covid19/timeseries.json')).json()
@@ -19,7 +17,7 @@ let clickConfirmed = false
     let totalDeaths = 0
     let totalConfirmed = 0
     let totalPop = 0
-    if (!flags) {
+    if (Object.keys(flags).length > 1) {
       for (const [k, v] of Object.entries(flags)) {
         //console.log(v);
         if (v.name.includes('Hong Kong')) {
@@ -33,14 +31,11 @@ let clickConfirmed = false
         delete flags[k]
       }
     }
-
-    //console.log('flags ', flags);
     let flagNotFound = 0
     for (const [indicativeCountry, infoDatas] of Object.entries(vaccine)) {
       //console.warn('location from vaccine api ', infoDatas)
       //vaccine[infoDatas.location] = infoDatas
       //delete vaccine[indicativeCountry]
-
       const country = infoDatas.location
       if (country === 'World') {
       console.log('World', infoDatas);
