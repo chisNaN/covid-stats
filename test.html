@@ -70,7 +70,7 @@ console.warn('contentLength', contentLength)
   */
   const xhr = new XMLHttpRequest()
                         //   xhr.open('post', TEMPORAL_CLOUD_IPFS_DOWNLOAD_ENDPOINT + hash)
-                          xhr.open('get', 'https://covid.ourworldindata.org/data/owid-covid-data.json')
+                          xhr.open('get', 'https://covid.ourworldindata.org/data/owid-covid-data.json', false)
                           //xhr.responseType = 'text'
                           // xhr.setRequestHeader('Cache-Control', 'no-cache')
                           // xhr.setRequestHeader('Authorization', 'Bearer ' + sessionInfo.token)
@@ -89,7 +89,7 @@ console.warn('contentLength', contentLength)
                           xhr.addEventListener('loadend', () => console.log('end'))
                           xhr.addEventListener('load', () => console.log(JSON.parse(xhr.responseText)))
                           xhr.addEventListener('error', console.warn)
-                          xhr.send()
+                          xhr.send(null)
     </script>
   </body>
 </html>
