@@ -87,7 +87,7 @@ console.warn('contentLength', contentLength)
                               }
                           })
                           xhr.addEventListener('loadend', () => console.log('end'))
-                          xhr.addEventListener('load', () => console.log(xhr.responseText))
+                          xhr.addEventListener('load', () => console.log(JSON.parse(xhr.responseText)))
                           xhr.addEventListener('error', console.warn)
                           xhr.send()
     </script>
