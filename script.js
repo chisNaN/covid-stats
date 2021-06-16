@@ -1,8 +1,10 @@
-import vaccine from './covid.js'
-console.log('vaccine', vaccine)
+// import vaccine from './covid.js'
+//console.log('vaccine', vaccine)
 let flags = null
+let vaccine = null
 let clickConfirmed = false
-async function displayData({ type, target }) {
+// we MUST NOT RELOAD fetch crossdomain every sort action!!! (only once in DOMContentLoaded)
+/*async*/ function displayData({ type, target }) {
   try {
     console.warn('flags', flags)
     const sort = target?.id ?? 'confirmed'
@@ -112,7 +114,9 @@ async function displayData({ type, target }) {
 
 document.addEventListener('DOMContentLoaded', async e => {
   flags = await (await fetch('https://unpkg.com/country-flag-emoji-json@1.0.2/json/flag-emojis.json')).json()
-  await displayData(e)
+  // the following json is very heavy already >55mo
+  vaccine = await (await fetch('https://covid.ourworldindata.org/data/owid-covid-data.json')).json()
+  displayData(e)
   setFilterListeners()
 })
 const setFilterListeners = () => {
