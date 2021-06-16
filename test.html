@@ -69,21 +69,15 @@ console.warn('contentLength', contentLength)
   }
   */
   const xhr = new XMLHttpRequest()
-                        //   xhr.open('post', TEMPORAL_CLOUD_IPFS_DOWNLOAD_ENDPOINT + hash)
                           xhr.open('get', 'https://covid.ourworldindata.org/data/owid-covid-data.json', false)
-                          //xhr.responseType = 'text'
-                          // xhr.setRequestHeader('Cache-Control', 'no-cache')
-                          // xhr.setRequestHeader('Authorization', 'Bearer ' + sessionInfo.token)
+                        
                           xhr.addEventListener('progress', event => {
                               if (event.lengthComputable) {
                                   // console.log('event', event);
                                   const percent = +((event.loaded / event.total) * 100).toFixed(2)
                                                                     console.log('percent', percent);
-
-                                  //this.setState({ ['videoPercent-' + k]: `${percent} %` })
                               } else {
-                                  console.warn('cannot retrieve total file size from infura ipfs')
-                                  //reject('cannot retrieve total file size from infura ipfs')
+                                  console.warn('cannot retrieve total file size ')
                               }
                           })
                           xhr.addEventListener('loadend', () => console.log('end'))

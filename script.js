@@ -115,7 +115,26 @@ let clickConfirmed = false
 document.addEventListener('DOMContentLoaded', async e => {
   flags = await (await fetch('https://unpkg.com/country-flag-emoji-json@1.0.2/json/flag-emojis.json')).json()
   // the following json is very heavy already >55mo
-  vaccine = await (await fetch('https://covid.ourworldindata.org/data/owid-covid-data.json')).json()
+  //vaccine = await (await fetch('https://covid.ourworldindata.org/data/owid-covid-data.json')).json()
+    const xhr = new XMLHttpRequest()
+  xhr.open('get', 'https://covid.ourworldindata.org/data/owid-covid-data.json', false)
+
+  xhr.addEventListener('progress', event => {
+      if (event.lengthComputable) {
+          // console.log('event', event);
+          const percent = +((event.loaded / event.total) * 100).toFixed(2)
+                                            console.log('percent', percent);
+      } else {
+          console.warn('cannot retrieve total file size ')
+      }
+  })
+  xhr.addEventListener('loadend', () => console.log('end'))
+  xhr.addEventListener('load', () => {
+
+   vaccine = JSON.parse(xhr.responseText)
+  })
+  xhr.addEventListener('error', console.warn)
+  xhr.send(null)
   displayData(e)
   setFilterListeners()
 })
