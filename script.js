@@ -17,7 +17,8 @@ let clickConfirmed = false
     let totalDeaths = 0
     let totalConfirmed = 0
     let totalPop = 0
-    if (Object.keys(flags).length > 1) {
+    //console.log('flags', flags);
+    if (flags[0]?.code) {
       for (const [k, v] of Object.entries(flags)) {
         //console.log(v);
         if (v.name.includes('Hong Kong')) {
@@ -115,18 +116,14 @@ document.addEventListener('DOMContentLoaded', async e => {
 
   xhr.addEventListener('progress', event => {
       if (event.lengthComputable) {
-          // console.log('event', event);
           const percent = +((event.loaded / event.total) * 100).toFixed(2)
-                                            console.log('percent', percent);
+          console.log('percent', percent)
       } else {
           console.warn('cannot retrieve total file size ')
       }
   })
   xhr.addEventListener('loadend', () => console.log('end'))
-  xhr.addEventListener('load', () => {
-
-   vaccine = JSON.parse(xhr.responseText)
-  })
+  xhr.addEventListener('load', () => vaccine = JSON.parse(xhr.responseText))
   xhr.addEventListener('error', console.warn)
   xhr.send(null)
   displayData(e)
