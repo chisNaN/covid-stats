@@ -96,9 +96,9 @@ let clickConfirmed = false
     const sortedByMax = stats.sort((a, b) => clickConfirmed ? a[sort] - b[sort] : b[sort] - a[sort])
     html += sortedByMax.map(v => `<tr><td>${v.flag}</td><td>${v.country}</td><td>${v.confirmed}<br>+ ${v.newConfirmed || ''}</td><td>${v.deaths}<br>+ ${v.newDeaths || ''}</td><td>${v.lethality} %</td><td>${v.peopleVaccinated}<br>+ ${v.newVaccinations || ''}<br /><font color="green">${v.dateInfoVaccination}</font></td><td>${v.confirmedByPop} %</td></tr>`).join('')
     document.querySelector('table').innerHTML += html
-    document.querySelector('div').innerHTML = `<div>Total deaths ${new Intl.NumberFormat('de-DE').format(totalDeaths)} <br> <span class="danger">% lethality ${((totalDeaths / totalConfirmed) * 100).toFixed(2)} %</span><br>
+    document.querySelector('div').innerHTML = `<div>
    <!-- Total recovered ${0/*new Intl.NumberFormat('de-DE').format(totalRecovered)*/}<br>-->
-    <u>new => </u><font color="brown">% death by world pop ${(totalDeaths / totalPop * 100).toFixed(3)} %</font><br>
+    <u>new => </u><font color="red">death by world pop ${(totalDeaths / totalPop * 100).toFixed(3)} %</font><br>
     <!--<span class="good">% recovered ${0/*((totalRecovered / totalConfirmed) * 100).toFixed(2)*/} %</span><br>-->
     <a href="https://fr.wikipedia.org/wiki/Pand%C3%A9mie_de_Covid-19_par_pays#D%C3%A9tail_des_cas_par_pays" target="_blank">Wikipedia article</a></div>`
     setFilterListeners()
