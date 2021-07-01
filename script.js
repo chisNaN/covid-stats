@@ -106,29 +106,38 @@ let clickConfirmed = false
     document.write(e.toString())
   }
 } // en displayData
-
-document.addEventListener('DOMContentLoaded', async e => {
-  flags = await (await fetch('https://unpkg.com/country-flag-emoji-json@1.0.2/json/flag-emojis.json')).json()
-  // the following json is very heavy already >55mo
-  //vaccine = await (await fetch('https://covid.ourworldindata.org/data/owid-covid-data.json')).json()
-    const xhr = new XMLHttpRequest()
-  xhr.open('get', 'https://covid.ourworldindata.org/data/owid-covid-data.json', false)
-
-  xhr.addEventListener('progress', event => {
-      if (event.lengthComputable) {
-          const percent = +((event.loaded / event.total) * 100).toFixed(2)
-          console.log('percent', percent)
-      } else {
-          console.warn('cannot retrieve total file size ')
-      }
-  })
-  xhr.addEventListener('loadend', () => console.log('end'))
-  xhr.addEventListener('load', () => vaccine = JSON.parse(xhr.responseText))
-  xhr.addEventListener('error', console.warn)
-  xhr.send(null)
-  displayData(e)
-  setFilterListeners()
-})
 const setFilterListeners = () => {
   [...document.querySelectorAll('a')].filter(v => v.id).forEach(v => v.addEventListener('click', displayData))
 }
+document.addEventListener('DOMContentLoaded', async e => {
+  try {
+    const fileSizeCovidAPI = localStorage.getItem('fileSizeCovidAPI')
+    flags = await (await fetch('https://unpkg.com/country-flag-emoji-json@1.0.2/json/flag-emojis.json')).json()
+    // the following json is very heavy already >55mo
+    //vaccine = await (await fetch('https://covid.ourworldindata.org/data/owid-covid-data.json')).json()
+    const P = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest()
+      xhr.open('get', 'https://covid.ourworldindata.org/data/owid-covid-data.json', true)
+      xhr.addEventListener('progress', event => {
+          if (fileSizeCovidAPI) {
+              const percent = +((event.loaded / fileSizeCovidAPI) * 100).toFixed(2)
+              console.log('percent', percent)
+              document.querySelector('progress').value = percent
+          } else {
+            document.querySelector('progress').style.display = 'none'
+            console.warn('cannot retrieve total file size ')
+          }
+      })
+      xhr.addEventListener('loadend', ({ loaded }) => localStorage.setItem('fileSizeCovidAPI', loaded))
+      // xhr.addEventListener('load', () => vaccine = JSON.parse(xhr.responseText))
+      xhr.addEventListener('load', () => resolve(xhr.responseText))
+      xhr.addEventListener('error', e => reject(e))
+      xhr.send(null)
+    }) // end promise
+    vaccine = JSON.parse(P)
+    displayData(e)
+    setFilterListeners()
+  } catch (e) {
+    console.warn(e);
+  }
+}) // end DOMContentLoaded
