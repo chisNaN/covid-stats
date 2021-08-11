@@ -13,7 +13,7 @@ let clickConfirmed = false
     //console.log(vaccine);
     const stats = []
     let html = `<tr><th></th><th>Country</th><th><a id="confirmed" >Confirmed</a></th><th><a href="#" id="deaths">Deaths</a></th><th><a href="#" id="lethality">Lethality</a></th><th><a href="#"
-    id="peopleVaccinated">Vaccinated</a></th><th><a href="#" id="confirmedByPop">% Confirmed by pop</a></th></tr>`
+    id="peopleVaccinated">Vaccinated</a></th><th><a href="#" id="confirmedByPop">% Confirmed by pop</a></th><th><a href="#" id="vaccinatedByPop">% (2 dosis) Vaccinated by pop</a></th></tr>`
     let totalDeaths = 0
     let totalConfirmed = 0
     let totalPop = 0
@@ -49,13 +49,13 @@ let clickConfirmed = false
       // const resultReg =
       const flag = flags[country] ?? flagNotFound++
       const { data } = infoDatas
-      const lastVaccined = data.filter(v => v.people_vaccinated)
+      const lastVaccined = data.filter(v => v.people_fully_vaccinated) // people_fully_vaccinated
       let peopleVaccinated = 0
       let newVaccinations = 0
       let dateInfoVaccination = null
       if(lastVaccined.length > 0) {
         //console.log('lastVaccined ',lastVaccined[lastVaccined.length - 1]);
-        peopleVaccinated = lastVaccined[lastVaccined.length - 1].people_vaccinated ?? 0
+        peopleVaccinated = lastVaccined[lastVaccined.length - 1].people_fully_vaccinated ?? 0
         newVaccinations = lastVaccined[lastVaccined.length - 1].new_vaccinations ?? 0
         dateInfoVaccination = lastVaccined[lastVaccined.length - 1].date
       } else {
@@ -72,6 +72,7 @@ let clickConfirmed = false
       const countryPop = infoDatas.population
       //totalRecovered += recovered
       const confirmedByPop = +((confirmed / countryPop) * 100).toFixed(2)
+      const vaccinatedByPop = +((peopleVaccinated / countryPop) * 100).toFixed(2)
       stats.push({
         country,
         confirmed,
@@ -80,7 +81,7 @@ let clickConfirmed = false
         //recovered,
         newConfirmed,
         newDeaths,
-        //newRecovered,
+        vaccinatedByPop,
         newVaccinations,
         peopleVaccinated,
         dateInfoVaccination,
@@ -94,7 +95,7 @@ let clickConfirmed = false
       clickConfirmed = !clickConfirmed
     }
     const sortedByMax = stats.sort((a, b) => clickConfirmed ? a[sort] - b[sort] : b[sort] - a[sort])
-    html += sortedByMax.map(v => `<tr><td>${v.flag}</td><td>${v.country}</td><td>${v.confirmed}<br>+ ${v.newConfirmed || ''}</td><td>${v.deaths}<br>+ ${v.newDeaths || ''}</td><td>${v.lethality} %</td><td>${v.peopleVaccinated}<br>+ ${v.newVaccinations || ''}<br /><font color="green">${v.dateInfoVaccination}</font></td><td>${v.confirmedByPop} %</td></tr>`).join('')
+    html += sortedByMax.map(v => `<tr><td>${v.flag}</td><td>${v.country}</td><td>${v.confirmed}<br>+ ${v.newConfirmed || ''}</td><td>${v.deaths}<br>+ ${v.newDeaths || ''}</td><td>${v.lethality} %</td><td>${v.peopleVaccinated}<br>+ ${v.newVaccinations || ''}<br /><font color="green">${v.dateInfoVaccination}</font></td><td>${v.confirmedByPop} %</td><td>${v.vaccinatedByPop} %</td></tr>`).join('')
     document.querySelector('table').innerHTML += html
     document.querySelector('div').innerHTML = `<div>
    <!-- Total recovered ${0/*new Intl.NumberFormat('de-DE').format(totalRecovered)*/}<br>-->
