@@ -136,6 +136,7 @@ document.addEventListener('DOMContentLoaded', async e => {
       xhr.send(null)
     }) // end promise
     vaccine = JSON.parse(P)
+    delete vaccine.OWID_INT
     displayData(e)
     setFilterListeners()
   } catch (e) {
