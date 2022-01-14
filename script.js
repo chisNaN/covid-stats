@@ -113,6 +113,13 @@ const setFilterListeners = () => {
 document.addEventListener('DOMContentLoaded', async e => {
   try {
     const fileSizeCovidAPI = localStorage.getItem('fileSizeCovidAPI')
+    console.warn('fileSizeCovidAPI ', fileSizeCovidAPI)
+    if (!fileSizeCovidAPI) {
+      document.querySelector('progress').style.display = 'none'
+      const warningMsg = 'Cannot retrieve JSON API total file size! Please wait...'
+      console.warn(warningMsg)
+      document.querySelector('table').innerHTML = `<span style="font-size: 5vw; color:red;">${warningMsg}</span>`
+    }
     flags = await (await fetch('https://unpkg.com/country-flag-emoji-json@1.0.2/json/flag-emojis.json')).json()
     // the following json is very heavy already >55mo
     //vaccine = await (await fetch('https://covid.ourworldindata.org/data/owid-covid-data.json')).json()
@@ -123,10 +130,10 @@ document.addEventListener('DOMContentLoaded', async e => {
           if (fileSizeCovidAPI) {
               const percent = +((event.loaded / fileSizeCovidAPI) * 100).toFixed(2)
               console.log('percent', percent)
+              if(!isFinite(percent)) {
+                throw new Error('Found Infinity percent value!')
+              }
               document.querySelector('progress').value = percent
-          } else {
-            document.querySelector('progress').style.display = 'none'
-            console.warn('cannot retrieve total file size ')
           }
       })
       xhr.addEventListener('loadend', ({ loaded }) => localStorage.setItem('fileSizeCovidAPI', loaded))
