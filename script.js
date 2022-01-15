@@ -134,6 +134,8 @@ document.addEventListener('DOMContentLoaded', async e => {
                 throw new Error('Found Infinity percent value!')
               }
               document.querySelector('progress').value = percent
+              document.querySelector('table').innerHTML = `<span style="font-size: 5vw; color:green;">${percent} %</span>`
+
           }
       })
       xhr.addEventListener('loadend', ({ loaded }) => localStorage.setItem('fileSizeCovidAPI', loaded))
